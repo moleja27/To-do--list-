@@ -1,15 +1,45 @@
-import { useState } from "react";
-import './App.css'; // Esto puedes mantenerlo si quieres usar estilos básicos
+import { useRef, useState } from 'react';
+import { FaEdit } from 'react-icons/fa';
+import { useForm } from '../hooks/useForm';
 
-function App() {
-  const [count, setCount] = useState(0);
+export const TodoUpdate = ({ todo, handleUpdateTodo }) => {
+  const { updateDescription, onInputChange } = useForm({
+    updateDescription: todo.description,
+  });
+
+  const [disabled, setDisabled] = useState(true);
+  const focusInputRef = useRef();
+
+  const onSubmitUpdate = e => {
+    e.preventDefault();
+
+    const id = todo.id;
+    const description = updateDescription;
+
+    handleUpdateTodo(id, description);
+
+    setDisabled(!disabled);
+
+    focusInputRef.current.focus();
+  };
 
   return (
-    <div>
-      <h1>Mi Aplicación en Blanco</h1>
-      {/* Puedes empezar a construir aquí */}
-    </div>
-  );
-}
+    <form onSubmit={onSubmitUpdate}>
+      <input
+        type='text'
+        className={`input-update ${todo.done ? 'text-decoration-dashed' : ''
+          }`}
+        name='updateDescription'
+        value={updateDescription}
+        onChange={onInputChange}
+        placeholder='¿Qué hay que hacer?'
+        readOnly={disabled}
+        ref={focusInputRef}
+      />
 
-export default App;
+      <button className='btn-edit' type='submit'>
+        <FaEdit />
+      </button>
+    </form>
+  );
+};
