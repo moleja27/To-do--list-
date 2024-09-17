@@ -1,45 +1,29 @@
-/* 
-    todo: {
-        id: 212310301231,
-        description: "Aprender Php"
-        done: 
-    }
+import { Todo, TodoAction } from './Type';
 
-*/
-
-export const todoReducer = (initialState, action) => {
+// Define el reducer para manejar las acciones
+export const todoReducer = (state: Todo[], action: TodoAction): Todo[] => {
     switch (action.type) {
         case 'Add Todo':
-            return [...initialState, action.payload];
+            return [...state, action.payload];
 
         case 'Delete Todo':
-            return initialState.filter(todo => todo.id !== action.payload);
+            return state.filter(todo => todo.id !== action.payload);
 
         case 'Complete Todo':
-            return initialState.map(todo => {
-                if (todo.id === action.payload) {
-                    return {
-                        ...todo,
-                        done: !todo.done,
-                    };
-                }
-
-                return todo;
-            });
+            return state.map(todo =>
+                todo.id === action.payload
+                    ? { ...todo, done: !todo.done }
+                    : todo
+            );
 
         case 'Update Todo':
-            return initialState.map(todo => {
-                if (todo.id === action.payload.id) {
-                    return {
-                        ...todo,
-                        description: action.payload.description,
-                    };
-                }
-
-                return todo;
-            });
+            return state.map(todo =>
+                todo.id === action.payload.id
+                    ? { ...todo, description: action.payload.description }
+                    : todo
+            );
 
         default:
-            return initialState;
+            return state;
     }
 };

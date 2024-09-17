@@ -1,45 +1,38 @@
-import { useRef, useState } from 'react';
-import { FaEdit } from 'react-icons/fa';
-import { useForm } from '../hooks/useForm';
+import React, { useState } from 'react';
+import TodoUpdate from './components/TodoUpdate';
 
-export const TodoUpdate = ({ todo, handleUpdateTodo }) => {
-  const { updateDescription, onInputChange } = useForm({
-    updateDescription: todo.description,
-  });
+interface Todo {
+  id: number | string;
+  description: string;
+  done: boolean;
+}
 
-  const [disabled, setDisabled] = useState(true);
-  const focusInputRef = useRef();
+const App: React.FC = () => {
+  const [todos, setTodos] = useState<Todo[]>([
+    { id: '1', description: 'Aprender TypeScript', done: false },
+    { id: '2', description: 'Estudiar React', done: false },
+  ]);
 
-  const onSubmitUpdate = e => {
-    e.preventDefault();
-
-    const id = todo.id;
-    const description = updateDescription;
-
-    handleUpdateTodo(id, description);
-
-    setDisabled(!disabled);
-
-    focusInputRef.current.focus();
+  const handleUpdateTodo = (id: number | string, description: string) => {
+    setTodos(todos.map(todo =>
+      todo.id === id
+        ? { ...todo, description }
+        : todo
+    ));
   };
 
   return (
-    <form onSubmit={onSubmitUpdate}>
-      <input
-        type='text'
-        className={`input-update ${todo.done ? 'text-decoration-dashed' : ''
-          }`}
-        name='updateDescription'
-        value={updateDescription}
-        onChange={onInputChange}
-        placeholder='¿Qué hay que hacer?'
-        readOnly={disabled}
-        ref={focusInputRef}
-      />
-
-      <button className='btn-edit' type='submit'>
-        <FaEdit />
-      </button>
-    </form>
+    <div>
+      <h1>Todo List</h1>
+      {todos.map(todo => (
+        <TodoUpdate
+          key={todo.id}
+          todo={todo}
+          handleUpdateTodo={handleUpdateTodo}
+        />
+      ))}
+    </div>
   );
 };
+
+export default App;
